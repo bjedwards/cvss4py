@@ -1,5 +1,6 @@
 {
     "metric_values" : {
+        "CVSS": ["4.0"],
         "AV": ["N", "A", "L", "P"],
         "AC": ["L", "H"],
         "AT": ["N", "P"],
@@ -38,5 +39,11 @@
         "threat": ["E"],
         "environmental": ["CR", "IR", "AR", "MAV", "MAC", "MAT", "MPR", "MUI", "MVC", "MVI", "MVA", "MSC", "MSI", "MSA" ],
         "supplemental": ["S", "AU", "R", "V", "RE", "U"]
+    },
+    "metric_defaults": {
+        "E": "A",
+        "CR": "H",
+        "IR": "H",
+        "AR": "H"
     }
 }
