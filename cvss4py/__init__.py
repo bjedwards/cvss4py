@@ -1,8 +1,8 @@
 import json
 import pkgutil
 
-data_dir = pkgutil.get_data("cvss4py", "data")
+metric_fname = pkgutil.get_data("data", "metric_data.json")
 
-with open(data_dir + "metric_data.json", "r") as f:
+with open(metric_fname, "r") as f:
     metric_data = json.load(f)
 
