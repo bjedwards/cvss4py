@@ -5,7 +5,7 @@ def vector_str_to_object(vector_str):
     raw_obj = dict([met_val.split(":") for met_val in vector_str.split("/")])
     validated_obj = {}
     modified_mets = {}
-    # Loop through the string and make sure all the metrics and objects are valid
+    # Loop through the string and make sure all the metrics and values are valid
     # We'll save off the modified metrics and overwrite later
     for (met, val) in raw_obj.items():
         assert met in metric_values
