@@ -10,8 +10,13 @@ def is_valid_vector(vector, default_is_valid = True, verbose = False):
         except:
             warnings.warn("Unable to parse vector string", SyntaxWarning)
             return False
+
+    if default_is_valid:
+        for met in metric_defaults:
+            # If it's included and is X or isn't in there
+            if vector.get(met, "X") == "X":
+                vector[met] = metric_defaults[met]
     
-    is_valid = True
     for (met, val) in vector.items():
         if (met not in metric_values) and verbose:
             warnings.warn(f"Metric '{met}' in vector, but is not a recognized metric", UnknownMetric)
@@ -29,11 +34,6 @@ def is_valid_vector(vector, default_is_valid = True, verbose = False):
 
     
     required_mets = metric_categories['base'] + ["CVSS", "E", "CR", "IR", "AR"]
-    if default_is_valid:
-        for met in metric_defaults:
-            # If it's included and is X or isn't in there
-            if vector.get(met, "X") == "X":
-                vector[met] = metric_defaults[met]
     
     missing_metrics = set(required_mets).difference(set(vector.keys()))
     if missing_metrics:
@@ -47,6 +47,13 @@ def vector_str_to_object(vector_str, validate_vector=True, warn_modified=True, r
         raw_obj = dict([met_val.split(":") for met_val in vector_str.split("/")])
     except:
         raise SyntaxError("Unable to parse vector string")
+
+    if validate_vector:
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", category=UnknownMetricValue)
+            warnings.simplefilter("error", category=MissingMetric)
+            is_valid = is_valid_vector(raw_obj, verbose=True)
+    
     final_obj = {}
     modified_mets = {}
 
@@ -74,11 +81,7 @@ def vector_str_to_object(vector_str, validate_vector=True, warn_modified=True, r
         if (final_obj.get(met, "X") == "X") and replace_default:
             final_obj[met] = metric_defaults[met]
     
-    if validate_vector:
-        with warnings.catch_warnings():
-            warnings.simplefilter("error", category=UnknownMetricValue)
-            warnings.simplefilter("error", category=MissingMetric)
-            is_valid = is_valid_vector(final_obj, verbose=True)
+
 
     return final_obj
 
