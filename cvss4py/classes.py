@@ -6,3 +6,6 @@ class UnknownMetricValue(Warning):
 
 class MissingMetric(Warning):
     pass
+
+class InvalidEqClass(Warning):
+    pass

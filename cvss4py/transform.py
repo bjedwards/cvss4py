@@ -1,6 +1,6 @@
 import warnings
 
-from .data import metric_defaults, metric_categories, metric_values
+from .data import metric_defaults, metric_categories, metric_values, eq_class_values
 from .classes import UnknownMetric, UnknownMetricValue, MissingMetric
 
 def is_valid_vector(vector, default_is_valid = True, verbose = False):
@@ -81,3 +81,66 @@ def vector_str_to_object(vector_str, validate_vector=True, warn_modified=True, r
             is_valid = is_valid_vector(final_obj, verbose=True)
 
     return final_obj
+
+def vector_to_equivalence_class(vector):
+    if isinstance(vector, str):
+        vector = vector_str_to_object(vector)
+    
+    if vector['AV'] == "N" and\
+       vector["PR"] == "N" and\
+       vector["UI"] == "N":
+        eq1 = 0
+    elif vector["AV"] != "P" and\
+         (vector["AV"] == "N" or\
+          vector["PR"] == "N" or\
+          vector["UI"] == "N"):
+        eq1 = 1
+    else:
+        eq1 = 2
+
+    if vector['AC'] == "L" and\
+       vector['AT'] == "N":
+       eq2 = 0
+    else:
+        eq2 = 1
+    
+    if vector["VC"] == "H" and\
+       vector["VI"] == "H":
+        eq3 = 0
+    elif vector["VC"] == "H" or\
+         vector["VI"] == "H" or\
+         vector["VA"] == "H":
+        eq3 = 1
+    else:
+        eq3 = 2
+    
+    if vector["SI"] == "S" or\
+       vector["SA"] == "S":
+        eq4 = 0
+    elif vector["SC"] == "H" or\
+         vector["SI"] == "H" or\
+         vector["SA"] == "H":
+        eq4 = 1
+    else:
+        eq4 = 2
+
+    if vector["E"] == "A":
+        eq5 = 0
+    elif vector["E"] == "P":
+        eq5 = 1
+    else:
+        eq5 = 2
+    
+    if (vector["CR"] == "H" and vector["VC"] == "H") or\
+       (vector["IR"] == "H" and vector["VI"] == "H") or\
+       (vector["AR"] == "H" and vector["VA"] == "H"):
+        eq6 = 0
+    else:
+        eq6 = 1
+    
+    return "".join(map(str, [eq1, eq2, eq3, eq4, eq5, eq6]))
+
+def is_valid_eq_class(eq_class):
+    eq_list = [int(eq_c) for eq_c in eq_class]
+    valid_values = all([(eq_c in eq_class_values[i]) for (i, eq_c) in enumerate(eq_list)])
+    return valid_values and not (eq_list[2]==2 and eq_list[5]==0)
