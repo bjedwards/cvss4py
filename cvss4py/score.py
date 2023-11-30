@@ -112,7 +112,7 @@ def score_vector(vector, validate_vector=True, warn_modified=True, replace_defau
     else:
         total_adjustment = mean(adjustments_to_mean)
 
-    return base_score-total_adjustment
+    return round(base_score-total_adjustment, 1)
     
     
 
