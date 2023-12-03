@@ -16,7 +16,7 @@ def next_lower_eq_classes(eq_class):
     next_lowers = {}
     for i in [1, 2, 4, 5]:
         eq = eq_list[i-1]
-        if eq + 1 in eq_class_values[i]:
+        if eq + 1 in eq_class_values[i-1]:
             next_lower = eq_list.copy()
             next_lower[i-1] = eq + 1
             next_lowers['eq' + str(i)] = "".join(map(str, next_lower))
@@ -72,11 +72,17 @@ def score_vector(vector, validate_vector=True, warn_modified=True, replace_defau
     eq_d = {'eq36':eq_c[2] + eq_c[5]}
     for i in [1, 2, 4, 5]:
         eq_d['eq' + str(i)] = eq_c[i-1]
+
+    #print("Macrovector: ", eq_c)
     
     base_score = score_eq_class(eq_c) 
     next_lowers = next_lower_eq_classes(eq_c)
     next_lower_scores = {eq:score_eq_class(eq_c) if eq_c is not None else None for (eq, eq_c) in next_lowers.items()}
     score_differences =  {eq:base_score-eq_s if eq_s is not None else None for (eq, eq_s) in next_lower_scores.items()}
+
+    #print("Base Score: ", base_score)
+    #print("Next Lowers: ", next_lowers)
+    #print("Next lower scores: ", next_lower_scores)
 
     maxes_lists = []
     for eq in next_lowers:
@@ -88,16 +94,25 @@ def score_vector(vector, validate_vector=True, warn_modified=True, replace_defau
         if not any([d < 0 for d in distances.values()]):
             break
     
+    #print("Distances: ", distances)
+
     eq_severity_distance = {}
     for eq in eq_d:
         eq_severity_distance[eq] = 0
         for metric in eq_class_metrics[eq]:
             eq_severity_distance[eq] += distances[metric]
     
+    #print("eq_severity_distance ", eq_severity_distance)
     max_dists = {eq:eq_class_max_distance[eq][eq_d[eq]] for eq in eq_d}
+    #print("max_dists", max_dists)
+
+    #print("Available Distance", score_differences)
+
     perc_eq_severity_distance = {}
     for eq,d in eq_severity_distance.items():
         perc_eq_severity_distance[eq] = d/max_dists[eq]
+
+    #print("Perc_eq_severity_dist", perc_eq_severity_distance)
 
     adjustments = {}
     for eq,p in perc_eq_severity_distance.items():
@@ -106,11 +121,15 @@ def score_vector(vector, validate_vector=True, warn_modified=True, replace_defau
         else:
             adjustments[eq] = None
 
+    #print("Adjustments: ", adjustments)
+
     adjustments_to_mean = [a for a in adjustments.values() if a is not None]
     if len(adjustments_to_mean) == 0:
         total_adjustment = 0.0
     else:
         total_adjustment = mean(adjustments_to_mean)
+
+    #print("Total Adjustments: ", total_adjustment)
 
     return round(base_score-total_adjustment, 1)
     
