@@ -67,6 +67,14 @@ def vector_str_to_object(vector_str, validate_vector=True, warn_modified=True, r
     # Include modified versions, warn if both metric and modified version and included
     for met,val in modified_mets.items():
         new_met = met[1:]
+        if val == "X":
+            if new_met not in final_obj:
+                raise IndexError(f"Metric {new_met} in not included in vector and modified metric {met} has default value 'X'")
+            else:
+                warnings.warn(
+                    f"Modified metric {met} has value 'X', using original {new_met} value {val}"
+                )
+                continue
         if (new_met in final_obj) and warn_modified:
             # Maybe shouldn't warn here.
             warnings.warn(
