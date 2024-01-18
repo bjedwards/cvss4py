@@ -1,5 +1,6 @@
 __all__ = ["metric_values", "metric_categories", "metric_defaults", 
-           "eq_class_values", "eq_class_scores", "eq_class_max_subvectors", "eq_class_metrics"]
+           "eq_class_values", "eq_class_scores", "eq_class_max_subvectors",
+           "eq_class_metrics", "test_vectors"]
 
 def __dir__():
     return __all__
@@ -29,4 +30,7 @@ eq_class_max_subvectors = eq_data['eq_class_max_subvectors']
 eq_class_values = eq_data['eq_class_values']
 eq_class_scores = eq_data['eq_class_scores']
 eq_class_max_distance = eq_data["eq_class_max_distances"]
+
+test_vectors = json.loads(pkgutil.get_data("cvss4py", "data/test_vectors.json"))
+
 
