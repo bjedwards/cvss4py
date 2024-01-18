@@ -1,5 +1,6 @@
 from itertools import product
 from statistics import mean
+from decimal import Decimal, ROUND_HALF_UP
 
 from .data import eq_class_scores, eq_class_values, eq_class_max_subvectors, eq_class_max_distance, metric_distances, eq_class_metrics
 from .transform import *
@@ -82,6 +83,7 @@ def score_vector(vector, validate_vector=True, warn_modified=True, replace_defau
     next_lowers = next_lower_eq_classes(eq_c)
     next_lower_scores = {eq:score_eq_class(eq_c) if eq_c is not None else None for (eq, eq_c) in next_lowers.items()}
     score_differences =  {eq:base_score-eq_s if eq_s is not None else None for (eq, eq_s) in next_lower_scores.items()}
+    
 
     #print("Base Score: ", base_score)
     #print("Next Lowers: ", next_lowers)
@@ -133,8 +135,8 @@ def score_vector(vector, validate_vector=True, warn_modified=True, replace_defau
         total_adjustment = mean(adjustments_to_mean)
 
     #print("Total Adjustments: ", total_adjustment)
-
-    return round(base_score-total_adjustment, 1)
+    # Has to do with banker rounding (ROUND_EVEN) vs school rounding ROUND_HALF_UP
+    return float(Decimal(base_score-total_adjustment).quantize(Decimal('.1'), rounding=ROUND_HALF_UP))
     
     
 
