@@ -66,6 +66,9 @@ def severity_distance(vector1, vector2, drop_any_negative=False):
 
 def score_vector(vector, validate_vector=True, warn_modified=True, replace_default=True):
     v = vector_str_to_object(vector, validate_vector=validate_vector, warn_modified=warn_modified, replace_default=replace_default)
+    is_zero = all([v[m] == 'N' for m in ["VC", "VI", "VA", "SC", "SI", "SA"]])
+    if is_zero:
+        return 0
     eq_c = vector_to_equivalence_class(v)
     assert is_valid_eq_class(eq_c)
     
